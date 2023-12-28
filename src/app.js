@@ -21,7 +21,7 @@ const passport = require("passport");
 const fileStore = require("session-file-store");
 const { initializePassport, checkRole } = require("./config/passport.config");
 const GitHubStrategy = require("passport-github2");
-const cookieParser = require("cookie-parser"); //revisar si funciona
+const cookieParser = require("cookie-parser"); 
 const { Contacts, Users, Carts, Products } = require("./dao/factory");
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -51,6 +51,13 @@ app.use(bodyParser.json());
 app.use('/auth', authRoutes);
 app.use('/api', productRoutes);
 app.use(authMiddleware);
+app.use(passport.initialize())
+app.use(passport.session());
+app.use("/", cartRouter);
+app.use("/", productsRouter); 
+app.use("/", vistaRouter);
+app.use("/", userRouter);
+app.use("/", sessionRouter)
 
 io.on('connection', (socket) => {
     console.log('Cliente conectado');
@@ -81,13 +88,7 @@ app.use(session({
 initializePassport();
 
 
-app.use(passport.initialize())
-app.use(passport.session());
-app.use("/", cartRouter);
-app.use("/", productsRouter); 
-app.use("/", vistaRouter);
-app.use("/", userRouter);
-app.use("/", sessionRouter)
+
 
 function sendPasswordResetEmail(email, token) {
   let transporter = nodemailer.createTransport({
